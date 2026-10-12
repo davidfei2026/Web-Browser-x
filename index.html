@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Offline PWA App</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#121212">
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: #121212;
+      color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .card {
+      background: #1e1e1e;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+      text-align: center;
+    }
+    .status {
+      margin-top: 15px;
+      padding: 8px 15px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      display: inline-block;
+    }
+    .online { background: #1b5e20; color: #b9f6ca; }
+    .offline { background: #b71c1c; color: #ff9e9e; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>My True Browser PWA</h1>
+    <p>This web app works completely offline via GitHub Pages.</p>
+    <div id="network-status" class="status online">Online</div>
+  </div>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then(reg => console.log('Service Worker registered! Scope:', reg.scope))
+          .catch(err => console.error('Service Worker registration failed:', err));
+      });
+    }
+    const statusEl = document.getElementById('network-status');
+    function updateStatus() {
+      if (navigator.onLine) {
+        statusEl.textContent = "Online";
+        statusEl.className = "status online";
+      } else {
+        statusEl.textContent = "Offline Mode Active";
+        statusEl.className = "status offline";
+      }
+    }
+    window.addEventListener('online', updateStatus);
+    window.addEventListener('offline', updateStatus);
+    updateStatus();
+  </script>
+</body>
+</html>
